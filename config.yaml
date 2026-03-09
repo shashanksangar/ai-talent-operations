@@ -1,0 +1,94 @@
+operations:
+  # Scheduling Agent Configuration
+  scheduling_agent:
+    enabled: true
+    workflow_path: "workflows/scheduling"
+    max_interviews_per_week: 1
+    business_hours:
+      start: "09:00"
+      end: "17:00"
+    default_duration: 60
+    buffer_time: 15
+
+  # Sourcing Agent Configuration
+  sourcing_agent:
+    enabled: true
+    api_endpoint: "http://localhost:5000/api"
+    endpoints:
+      search: "/search"
+      evaluate: "/evaluate"
+      export: "/export"
+    timeout: 30
+    max_results: 100
+
+  # Matching Agent Configuration
+  matching_agent:
+    enabled: true
+    api_endpoint: "http://localhost:5001/api"
+    endpoints:
+      match: "/match"
+      batch_match: "/batch-match"
+    timeout: 30
+    scoring_weights:
+      skills: 0.40
+      experience: 0.30
+      cultural_fit: 0.20
+      other: 0.10
+
+  # Outreach Agent Configuration
+  outreach_agent:
+    enabled: true
+    api_endpoint: "http://localhost:5002/api"
+    endpoints:
+      generate_message: "/generate-message"
+      create_campaign: "/create-campaign"
+    timeout: 30
+    default_tone: "professional"
+    tones:
+      - professional
+      - friendly
+      - enthusiastic
+      - direct
+
+  # Model Mapping Agent Configuration
+  model_mapping_agent:
+    enabled: true
+    workflow_path: "workflows/model_mapping"
+    arxiv_base_url: "http://export.arxiv.org/api/query"
+    max_results: 5
+    timeout: 10
+
+  # Workflow Settings
+  workflow:
+    name: "default"
+    batch_size: 50
+    parallel_processing: true
+    retry_attempts: 3
+    retry_delay: 5
+
+  # Export & Output
+  export:
+    format: "json"
+    include_timestamps: true
+    include_metadata: true
+    output_directory: "./results"
+
+  # Monitoring
+  monitoring:
+    enabled: true
+    log_level: "INFO"
+    track_metrics: true
+    save_logs: true
+    log_directory: "./logs"
+
+# Model Configuration
+model:
+  sourcing:
+    model: "claude-sonnet-4-5"
+    temperature: 0.7
+  matching:
+    model: "claude-sonnet-4-5"
+    temperature: 0.5
+  outreach:
+    model: "claude-sonnet-4-5"
+    temperature: 0.7
