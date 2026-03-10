@@ -1,0 +1,54 @@
+name: Release - Main Orchestrator
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install build tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install build wheel twine
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run tests before release
+      run: |
+        pip install pytest pytest-cov
+        python stress_test.py
+
+    - name: Build distribution packages
+      run: |
+        python -m build
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/*
+        generate_release_notes: true
+        draft: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload to PyPI
+      run: |
+        twine upload dist/* -u __token__ -p ${{ secrets.PYPI_API_TOKEN }} || true
+      continue-on-error: true
